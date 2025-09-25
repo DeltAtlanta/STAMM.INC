@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>STAMM-industries — Version 4 avec Logo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="png" href="image.png">
+  <style>
+    :root{
+      --bg:#0e0e0e; --card:#141414; --accent:#00ff99; --accent-2:#00cc77; --muted:#bfc7c2;
+      --glass: rgba(255,255,255,0.05);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:#eafaf1;line-height:1.6;overflow-x:hidden}
+    a{text-decoration:none;cursor:pointer}
+    img{max-width:100%}
+
+    /* ===== Header ===== */
+    header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.7);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.05)}
+    .header-container{max-width:1200px;margin:auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{height:32px;width:auto}
+    .brand h1{font-size:18px;font-weight:700;color:var(--accent)}
+
+    nav ul{display:flex;gap:18px;list-style:none}
+    nav a{color:var(--accent);font-weight:600;padding:8px 12px;border-radius:6px;transition:.25s}
+    nav a:hover,.active-link{background:var(--glass);color:var(--accent-2)}
+
+    /* ===== Hamburger ===== */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 22px;
+      cursor: pointer;
+      position: relative;
+      z-index: 300;
+    }
+
+    .hamburger span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: all 0.4s ease-in-out;
+      transform-origin: center;
+    }
+
+    .hamburger.open span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    .hamburger.open span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* ===== Menu mobile ===== */
+    .mobile-nav{position:fixed;top:0;right:-100%;width:70%;height:100vh;background:#111;padding:60px 20px;
+      display:flex;flex-direction:column;gap:24px;transition:.4s ease;z-index:200}
+    .mobile-nav.active{right:0}
+    .mobile-nav .logo{display:flex;justify-content:center;margin-bottom:40px}
+    .mobile-nav .logo img{height:40px;width:auto}
+    .mobile-nav a{color:#fff;font-size:20px;font-weight:600;padding:10px;border-radius:8px;text-align:center}
+    .mobile-nav a:hover,.mobile-nav .active-link{background:var(--glass);color:var(--accent)}
+
+    .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);
+      opacity:0;pointer-events:none;transition:.4s;z-index:150}
+    .overlay.active{opacity:1;pointer-events:auto}
+
+    /* ===== Sections ===== */
+    .container{max-width:1200px;margin:40px auto;padding:0 20px}
+    section{display:none;animation:fade .5s ease}
+    section.active{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ===== Hero ===== */
+    .hero{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+      min-height:100vh;padding:70px 20px;position:relative;overflow:hidden}
+    .hero h2{font-size:56px;font-weight:800;color:var(--accent);margin-bottom:14px}
+    .hero p{max-width:700px;font-size:20px;color:var(--muted);margin-bottom:30px}
+    .cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+    .btn{padding:16px 26px;border-radius:14px;font-weight:700;cursor:pointer;transition:.3s;border:0;font-size:18px}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#08120b;box-shadow:0 4px 20px rgba(0,255,153,0.2)}
+    .btn-primary:hover{transform:translateY(-3px) scale(1.05)}
+    .btn-ghost{background:transparent;border:2px solid var(--accent);color:var(--accent)}
+    .btn-ghost:hover{background:var(--accent);color:#08120b;transform:translateY(-3px)}
+
+    .glow{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(0,255,153,0.2),transparent 70%);
+      top:-200px;left:50%;transform:translateX(-50%);filter:blur(100px);animation:pulse 6s infinite alternate;}
+    @keyframes pulse{from{opacity:.4;transform:translateX(-50%) scale(1)}to{opacity:.8;transform:translateX(-50%) scale(1.2)}}
+
+    /* ===== Features ===== */
+    .features{margin-top:60px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;text-align:center}
+    .feature{background:var(--glass);padding:24px;border-radius:14px;transition:.3s}
+    .feature:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(0,255,153,0.1)}
+    .feature h3{color:var(--accent);margin-bottom:10px;font-size:22px}
+    .feature p{color:var(--muted)}
+
+    /* ===== Produits ===== */
+    .product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
+    .card{background:var(--glass);border-radius:14px;padding:16px;transition:.35s;border:1px solid rgba(255,255,255,0.05)}
+    .card:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 20px 40px rgba(0,255,153,0.12)}
+
+    /* ===== Stats ===== */
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+    .stat{background:var(--glass);padding:20px;text-align:center;border-radius:14px}
+    .stat h4{font-size:28px;color:var(--accent)}
+
+    /* ===== Contact ===== */
+    form{max-width:500px;margin:auto;display:flex;flex-direction:column;gap:14px}
+    input,textarea{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:#fff}
+    .success-msg{color:var(--accent);text-align:center;margin-top:10px;display:none}
+
+    /* ===== Footer ===== */
+    footer{margin-top:60px;padding:30px 20px;text-align:center;color:var(--muted);border-top:1px solid rgba(255,255,255,0.05)}
+
+    /* ===== Responsive ===== */
+    @media(max-width:768px){
+      nav ul{display:none}
+      .hamburger{display:flex}
+      .hero h2{font-size:38px}
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <img src="image.png" alt="Logo">
+        <h1>STAMM-industries</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a data-page="home" class="active-link">Accueil</a></li>
+          <li><a data-page="products">Produits</a></li>
+          <li><a data-page="stats">Stats</a></li>
+          <li><a data-page="contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menu mobile -->
+  <div class="mobile-nav" id="mobileNav">
+    <div class="logo"><img src="image.png" alt="Logo"></div>
+    <a data-page="home" class="active-link">Accueil</a>
+    <a data-page="products">Produits</a>
+    <a data-page="stats">Stats</a>
+    <a data-page="contact">Contact</a>
+  </div>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Pages -->
+  <main class="container">
+    <!-- Accueil -->
+    <section id="home" class="active">
+      <div class="hero">
+        <div class="glow"></div>
+        <h2>Nous construisons l’avenir</h2>
+        <p>STAMM-industries conçoit des solutions modernes, rapides et fiables.<br>
+        Votre succès commence avec un design élégant et une technologie performante.</p>
+        <div class="cta">
+          <a data-page="products" class="btn btn-primary">🚀 Découvrir</a>
+          <a data-page="contact" class="btn btn-ghost">📩 Proposez vos idées</a>
+        </div>
+      </div>
+      <div class="features">
+        <div class="feature"><h3>⚡ Rapidité</h3><p>Nos produits sont optimisés pour offrir une performance maximale.</p></div>
+        <div class="feature"><h3>🎨 Design</h3><p>Un style moderne et élégant qui fait briller vos projets.</p></div>
+        <div class="feature"><h3>🔒 Fiabilité</h3><p>Sécurité et stabilité sont au cœur de toutes nos solutions.</p></div>
+      </div>
+    </section>
+
+    <!-- Produits -->
+    <section id="products">
+      <h2 style="color:var(--accent);margin-bottom:20px">Produits</h2>
+      <div class="product-grid">
+        <div class="card">
+          <a href="https://nextjs-boilerplate-six-phi-5xmus3jlbg.vercel.app" target="_blank">
+            <img src="e-book.png" alt="E-BOOK">
+          </a>
+          <h3>E-BOOK</h3>
+          <p>E-BOOK est un projet réalisé au cours de l'année 2025. Il permet de partager un album photo entre amis à partir du moment où ces amis possèdent le code secret. L'album sera visible que lorsque la date de dévoilement sera atteinte.</p>
+        </div>
+
+        <div class="card">
+          <a href="https://site-cb.vercel.app/index.html" target="_blank">
+            <img src="duck.png" alt="cyber duck">
+          </a>
+          <h3>Cyber Duck</h3>
+          <p>Cyber duck est un site web qui vous permet de nous confier votre ilage numérique en nous laissant développer vos propores sites avec différents tarifs.</p>
+        </div>
+
+
+        <div class="card">
+          <a href="https://nextjs-boilerplate-six-phi-5xmus3jlbg.vercel.app" target="_blank">
+            <img src="sortizen.png" alt="sortizen">
+          </a>
+          <h3>Sorti-zen</h3>
+          <p>Sorti-zen est un site web aidant a organiser des sorties facilement, sans prise de tête.</p>
+        </div>
+
+
+        <div class="card">
+          <a href="https://trailix-phi.vercel.app" target="_blank">
+            <img src="trailix.png" alt="Trailix">
+          </a>
+          <h3>Trailix</h3>
+          <p>Trailix est un site web permettant de publier des vidéos (pas trop longues) sur un fil qui est libre d'accès.</p>
+        </div>
+
+
+        <div class="card">
+          <a href="https://trailix-phi.vercel.app" target="_blank">
+            <img src="trailix.png" alt="Trailix">
+          </a>
+          <h3>Questly</h3>
+          <p>Questly est un site web vous permettant, après d'avoir inscrit votre objéctif, d'avoir plusieurs quètes et de poffiner votre compte en remportant des achivements.</p>
+        </div>
+
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section id="stats">
+      <h2 style="color:var(--accent);margin-bottom:20px">Statistiques</h2>
+      <div class="stats">
+        <div class="stat"><h4>500</h4><p>Clients satisfaits</p></div>
+        <div class="stat"><h4>1200</h4><p>Projets terminés</p></div>
+        <div class="stat"><h4>24</h4><p>Support/7</p></div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <h2 style="color:var(--accent);margin-bottom:20px">Contact</h2>
+      <form id="contactForm">
+        <input type="text" name="name" placeholder="Votre nom" required>
+        <input type="email" name="email" placeholder="Votre email" required>
+        <textarea name="message" placeholder="Votre message" required></textarea>
+        <button type="submit" class="btn btn-primary">Envoyer</button>
+        <div class="success-msg" id="successMsg">✅ Message envoyé avec succès !</div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 STAMM-industries. Tous droits réservés.</p>
+  </footer>
+
+  <!-- EmailJS -->
+  <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init("TON_USER_ID"); // 🔑 Remplace par ton userID EmailJS
+    })();
+
+    // navigation entre pages
+    const links = document.querySelectorAll("[data-page]");
+    const sections = document.querySelectorAll("main section");
+
+    function showPage(page){
+      sections.forEach(s=>s.classList.remove("active"));
+      document.getElementById(page).classList.add("active");
+      links.forEach(l=>l.classList.remove("active-link"));
+      document.querySelectorAll(`[data-page='${page}']`).forEach(l=>l.classList.add("active-link"));
+    }
+
+    links.forEach(link=>{
+      link.addEventListener("click",()=>{
+        const target = link.getAttribute("data-page");
+        showPage(target);
+        window.location.hash = target;
+        closeMenu();
+      });
+    });
+
+    window.addEventListener("load",()=>{
+      const hash = window.location.hash.replace("#","");
+      if(hash){showPage(hash);}
+    });
+
+    // formulaire avec EmailJS
+    const form=document.getElementById('contactForm');
+    const msg=document.getElementById('successMsg');
+    form?.addEventListener('submit',function(e){
+      e.preventDefault();
+
+      emailjs.sendForm("TON_SERVICE_ID","TON_TEMPLATE_ID",this)
+        .then(()=>{
+          msg.style.display="block";
+          setTimeout(()=>msg.style.display="none",3000);
+          form.reset();
+        },(error)=>{
+          alert("Erreur: " + JSON.stringify(error));
+        });
+    });
+
+    // hamburger
+    const hamburger=document.getElementById('hamburger');
+    const mobileNav=document.getElementById('mobileNav');
+    const overlay=document.getElementById('overlay');
+
+    function toggleMenu(){
+      mobileNav.classList.toggle('active');
+      overlay.classList.toggle('active');
+      hamburger.classList.toggle('open');
+    }
+
+    function closeMenu(){
+      mobileNav.classList.remove('active');
+      overlay.classList.remove('active');
+      hamburger.classList.remove('open');
+    }
+
+    hamburger.addEventListener('click',toggleMenu);
+    overlay.addEventListener('click',closeMenu);
+  </script>
+</body>
+
+</html>
+
+ 
+                                                                  
+                                                                  
